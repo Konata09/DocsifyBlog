@@ -8,4 +8,5 @@ web.config
 node_modules
 
 docsify-themeable
-_posts
+posts
+_sidebar.md

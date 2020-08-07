@@ -1,8 +1,19 @@
-# 一级标题 Headline
+---
+title: README
+author: Konata
+summary: 
+tags: 
+  - 
+categories: 
 
-> An awesome project.
+  - No Category
+
+date: 2020-08-07 22:22:51
+---
 
 ## 二级标题
+
+> An awesome project.
 
 ### 三级标题
 
@@ -12,8 +23,6 @@
 
 ``` js
 function a() {
-
-    console.log('asd');
-
+    console.log('中文 Eng 初音ミク');
 }
 ```
