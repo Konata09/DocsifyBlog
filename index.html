@@ -49,20 +49,23 @@
       repo: 'https://github.com/Konata09',
       loadSidebar: true,
       alias: {
-      '/.*/_sidebar.md': '/_sidebar.md'
+        '/.*/_sidebar.md': '/_sidebar.md',
       },
       auto2top: true,
+      basePath: '/posts/',
+      homepage: 'hello-world.md',
       themeColor: '#0396FF',
       autoHeader: false,
       formatUpdated: (time) => (lastModify = new Date(time)),
       plugins: [
         function (hook, vm) {
-          var footer = [
+          const footer = [
             '<hr/>',
             '<footer>',
             '<span>&copy;2020 Konata<br>Proudly published with docsify</span>',
             '</footer>'
           ].join('');
+          let category = '无分类';
           const re = /^---[\r\n](.|[\r\n])*[\r\n]---[\r\n]/;
           const titleRe = /title:\s?(.*)/;
           const dateRe = /date:\s?(.*)/;
@@ -80,9 +83,11 @@
           hook.beforeEach(function (content) {
             // 每次开始解析 Markdown 内容时调用
             wordsCount = content.match(wordCountRe).length;
-            title = content.match(titleRe)[1];
-            publishDate = new Date(content.match(dateRe)[1]);
-            category = content.match(categoryRe)[1];
+            try {
+              title = content.match(titleRe)[1];
+              publishDate = new Date(content.match(dateRe)[1]);
+              category = content.match(categoryRe)[1];
+            } catch{ }
             return content.replace(re, '');
           });
 
