@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="description" content="生命不息 折腾不止">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#0396ff">
+  <meta name="msapplication-TileColor" content="#0396ff">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="viewport"
+    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css"> -->
+  <link rel="stylesheet" href="/css/theme-simple.css">
+  <!-- <link rel="stylesheet" href="/css/theme-simple-dark.css"> -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism-tomorrow.min.css">
+  <style>
+    body,
+    button,
+    input,
+    select,
+    textarea {
+      font-family: -apple-system, system-ui, BlinkMacSystemFont, 'PingFang SC', 'Segoe UI', Roboto, 'Hiragino Sans GB', 'Source Han Sans SC', 'Noto Sans CJK SC', 'Microsoft YaHei', 'WenQuanYi Micro Hei', 'WenQuanYi Zen Hei', 'Helvetica Neue', Arial, sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+  <nav style="display: none;">
+    <ul>
+      <li>
+        <a href="/">Full Version</a>
+      </li>
+      <li>
+        <a href="#/">中文</a>
+      </li>
+    </ul>
+  </nav>
+  <div id="app"></div>
+  <script>
+    const categoryStatus = [];
+    window.$docsify = {
+      name: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 512 512" style="margin-right: 10px"><defs><style>.cls-1{fill: none;stroke: #3f3f3f;stroke-linejoin: round;stroke-width: 7px;fill-rule: evenodd;}</style></defs><path class="cls-1" d="M30.913,414.969l66.049-59.328,60.451,58.208L96.962,481.013ZM250.329,221.313l-143.292,144.4,41.42,39.179L291.749,262.731M191,163.1L352.2,322.059h66.049l62.69-61.567V193.328L320.855,32.135H253.687L191,94.821V163.1Zm1.119-6.716,95.155-92.91M478.7,192.209l-92.916,95.148m-5.6-195.894,16.792-16.791,41.42,40.3-17.911,17.911M121.59,351.163l60.451,20.149M217.864,254.9l60.451,20.149M185.4,287.357l60.451,20.15M152.935,319.82l60.451,20.149"/></svg>'
+        + '生命不息 折腾不止',
+      repo: 'https://github.com/Konata09',
+      loadSidebar: true,
+      alias: {
+      '/.*/_sidebar.md': '/_sidebar.md'
+      },
+      auto2top: true,
+      themeColor: '#0396FF',
+      autoHeader: false,
+      formatUpdated: (time) => (lastModify = new Date(time)),
+      plugins: [
+        function (hook, vm) {
+          var footer = [
+            '<hr/>',
+            '<footer>',
+            '<span>&copy;2020 Konata<br>Proudly published with docsify</span>',
+            '</footer>'
+          ].join('');
+          const re = /^---[\r\n](.|[\r\n])*[\r\n]---[\r\n]/;
+          const titleRe = /title:\s?(.*)/;
+          const dateRe = /date:\s?(.*)/;
+          const wordCountRe = /([\u4e00-\u9fa5]+?|[a-zA-Z0-9]+)/g;
+          const categoryRe = /categories:\s?[\r\n]+\s+-\s(.*)/;
+
+          hook.afterEach(function (html) {
+            return html + footer;
+          });
+
+          hook.init(function () {
+            // 初始化完成后调用，只调用一次，没有参数。
+          });
+
+          hook.beforeEach(function (content) {
+            // 每次开始解析 Markdown 内容时调用
+            wordsCount = content.match(wordCountRe).length;
+            title = content.match(titleRe)[1];
+            publishDate = new Date(content.match(dateRe)[1]);
+            category = content.match(categoryRe)[1];
+            return content.replace(re, '');
+          });
+
+          hook.afterEach(function (html, next) {
+            // 解析成 html 后调用。
+            // beforeEach 和 afterEach 支持处理异步逻辑
+            // ...
+            // 异步处理完成后调用 next(html) 返回结果
+            let readTime = Math.ceil(wordsCount / 400);
+            //add html string
+            next(
+              `
+              <header>
+                <h1>${title}</h1>
+                <div class="metainfo">
+                  <time datetime="${publishDate.toISOString()}">${publishDate.toISOString().slice(0, 10)}</time>
+                  <span class="dot"></span>
+                  ${category}
+                  <span class="dot"></span>
+                  共 ${wordsCount} 字 (约 ${readTime} 分钟)
+                  <span class="dot"></span>
+                  最后修改: <time datetime="${lastModify.toISOString()}">${lastModify.toISOString().slice(0, 10)}</time>
+                  </div>
+              </header>
+              ${html}
+              `)
+          });
+
+          hook.doneEach(function () {
+            // 每次路由切换时数据全部加载完成后调用，没有参数。
+            const category = document.querySelectorAll('.sidebar-nav > ul > li > p');
+            category.forEach((cur, i) => {
+              const ul = cur.nextSibling;
+              // const totalHeight = ul.childElementCount * 36;
+              const totalHeight = ul.childElementCount * 1.935;
+              if (categoryStatus[i]) {
+                ul.style.height = totalHeight + 'rem'
+                cur.classList.add('active');
+              }
+              ul.classList.add('hide');
+              cur.addEventListener("click", e => {
+                if (ul.offsetHeight) {
+                  ul.style.height = '0px';
+                  cur.classList.remove('active');
+                  categoryStatus[i] = false
+                } else {
+                  ul.style.height = totalHeight + 'rem';
+                  cur.classList.add('active');
+                  categoryStatus[i] = true
+                }
+              })
+            })
+          });
+
+          hook.mounted(function () {
+            // 初始化并第一次加载完成数据后调用，只触发一次，没有参数。
+          });
+
+          hook.ready(function () {
+            // 初始化并第一次加载完成数据后调用，没有参数。
+          });
+        }
+      ]
+    }
+  </script>
+  <script>
+
+  </script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/combine/npm/prismjs@1/components/prism-java.min.js,npm/prismjs@1/components/prism-bash.min.js,npm/prismjs@1/components/prism-nginx.min.js,npm/prismjs@1/components/prism-c.min.js,npm/prismjs@1/components/prism-python.min.js,npm/prismjs@1/components/prism-less.min.js,npm/prismjs@1/components/prism-sass.min.js,npm/prismjs@1/components/prism-powershell.min.js,npm/prismjs@1/components/prism-ini.min.js,npm/prismjs@1/components/prism-cmake.min.js,npm/prismjs@1/components/prism-cpp.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-themeable@0"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.js"></script>
+  <script>
+    !function () { "use strict"; function r(o) { return (r = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o })(o) } !function (o, e) { void 0 === e && (e = {}); var t = e.insertAt; if (o && "undefined" != typeof document) { var n = document.head || document.getElementsByTagName("head")[0], c = document.createElement("style"); c.type = "text/css", "top" === t && n.firstChild ? n.insertBefore(c, n.firstChild) : n.appendChild(c), c.styleSheet ? c.styleSheet.cssText = o : c.appendChild(document.createTextNode(o)) } }, document.querySelector('link[href*="docsify-copy-code"]') && console.warn("[Deprecation] Link to external docsify-copy-code stylesheet is no longer necessary."), window.DocsifyCopyCodePlugin = { init: function () { return function (o, e) { o.ready(function () { console.warn("[Deprecation] Manually initializing docsify-copy-code using window.DocsifyCopyCodePlugin.init() is no longer necessary.") }) } } }, window.$docsify = window.$docsify || {}, window.$docsify.plugins = [function (o, s) { o.doneEach(function () { var o = Array.apply(null, document.querySelectorAll("pre[data-lang]")), c = { buttonText: "Copy", errorText: "Error", successText: "Copied" }; s.config.copyCode && Object.keys(c).forEach(function (t) { var n = s.config.copyCode[t]; "string" == typeof n ? c[t] = n : "object" === r(n) && Object.keys(n).some(function (o) { var e = -1 < location.href.indexOf(o); return c[t] = e ? n[o] : c[t], e }) }); var e = ['<button class="docsify-copy-code-button">', '<span class="label">'.concat(c.buttonText, "</span>"), '<span class="error">'.concat(c.errorText, "</span>"), '<span class="success">'.concat(c.successText, "</span>"), "</button>"].join(""); o.forEach(function (o) { o.insertAdjacentHTML("beforeend", e) }) }), o.mounted(function () { document.querySelector(".content").addEventListener("click", function (o) { if (o.target.classList.contains("docsify-copy-code-button")) { var e = "BUTTON" === o.target.tagName ? o.target : o.target.parentNode, t = document.createRange(), n = e.parentNode.querySelector("code"), c = window.getSelection(); t.selectNode(n), c.removeAllRanges(), c.addRange(t); try { document.execCommand("copy") && (e.classList.add("success"), setTimeout(function () { e.classList.remove("success") }, 1e3)) } catch (o) { console.error("docsify-copy-code: ".concat(o)), e.classList.add("error"), setTimeout(function () { e.classList.remove("error") }, 1e3) } "function" == typeof (c = window.getSelection()).removeRange ? c.removeRange(t) : "function" == typeof c.removeAllRanges && c.removeAllRanges() } }) }) }].concat(window.$docsify.plugins || []) }();
+  </script>
+</body>
+
+</html>
