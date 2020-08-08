@@ -57,28 +57,18 @@
       themeColor: '#0396FF',
       autoHeader: false,
       formatUpdated: (time) => (lastModify = new Date(time)),
+      search: {
+        placeholder: 'Search'
+      },
       plugins: [
         function (hook, vm) {
-          const footer = [
-            '<footer>',
-            '<hr/>',
-            '<div class="license-statement">',
-            '本文采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/deed.zh">知识共享署名-非商业性使用 4.0 国际许可协议</a> 进行许可。',
-            '</div>',
-            '<hr/>',
-            '<span>&copy;2020 Konata<br>Proudly published with docsify</span>',
-            '</footer>'
-          ].join('');
-          let category = '无分类';
           const re = /^---[\r\n](.|[\r\n])*[\r\n]---[\r\n]/;
           const titleRe = /title:\s?(.*)/;
           const dateRe = /date:\s?(.*)/;
-          const wordCountRe = /([\u4e00-\u9fa5]+?|[a-zA-Z0-9]+)/g;
           const categoryRe = /categories:\s?[\r\n]+\s+-\s(.*)/;
-
-          hook.afterEach(function (html) {
-            return html + footer;
-          });
+          const wordCountRe = /([\u4e00-\u9fa5]+?|[a-zA-Z0-9]+)/g;
+          const imgRe = /<img[^>]+alt="([^>]*)">/g;
+          let category = '无分类';
 
           hook.init(function () {
             // 初始化完成后调用，只调用一次，没有参数。
@@ -100,8 +90,31 @@
             // beforeEach 和 afterEach 支持处理异步逻辑
             // ...
             // 异步处理完成后调用 next(html) 返回结果
-            let readTime = Math.ceil(wordsCount / 400);
-            //add html string
+            const readTime = Math.ceil(wordsCount / 400);
+            const imgs = html.matchAll(imgRe);
+            let newHtml = '';
+            let img = imgs.next();
+            if (!img.done) {
+              let position = img.value.index + img.value[0].length;
+              let startPosition = 0;
+              while (!img.done) {
+                let imgNext = imgs.next();
+                if (!imgNext.done) {
+                  let positionNext = imgNext.value.index + imgNext.value[0].length;
+                  newHtml = `${newHtml}${html.slice(startPosition, position)}<span class="img-desc">${img.value[1]}</span>${html.slice(position, positionNext)}`;
+                  startPosition = positionNext;
+                  position = positionNext;
+                } else {
+                  newHtml = `${newHtml}${html.slice(startPosition, position)}<div class="img-desc">${img.value[1]}</div>${html.slice(position)}`;
+                  break;
+                }
+                img = imgNext;
+              }
+            } else {
+              newHtml = html;
+            }
+
+
             next(
               `
               <header>
@@ -116,7 +129,15 @@
                   最后修改: <time datetime="${lastModify.toISOString()}">${lastModify.toISOString().slice(0, 10)}</time>
                   </div>
               </header>
-              ${html}
+              ${newHtml}
+              <footer>
+              <hr/>
+              <div class="license-statement">
+              本文采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/deed.zh">知识共享署名-非商业性使用 4.0 国际许可协议</a> 进行许可。
+              </div>
+              <hr/>
+              <span>&copy;2020 Konata<br>Proudly published with docsify</span>
+              </footer>
               `)
           });
 
@@ -161,7 +182,8 @@
 
   </script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/combine/npm/prismjs@1/components/prism-java.min.js,npm/prismjs@1/components/prism-bash.min.js,npm/prismjs@1/components/prism-nginx.min.js,npm/prismjs@1/components/prism-c.min.js,npm/prismjs@1/components/prism-python.min.js,npm/prismjs@1/components/prism-less.min.js,npm/prismjs@1/components/prism-sass.min.js,npm/prismjs@1/components/prism-powershell.min.js,npm/prismjs@1/components/prism-ini.min.js,npm/prismjs@1/components/prism-cmake.min.js,npm/prismjs@1/components/prism-cpp.min.js,npm/prismjs@1/components/prism-json.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/combine/npm/prismjs@1/components/prism-java.min.js,npm/prismjs@1/components/prism-bash.min.js,npm/prismjs@1/components/prism-nginx.min.js,npm/prismjs@1/components/prism-c.min.js,npm/prismjs@1/components/prism-python.min.js,npm/prismjs@1/components/prism-less.min.js,npm/prismjs@1/components/prism-sass.min.js,npm/prismjs@1/components/prism-powershell.min.js,npm/prismjs@1/components/prism-ini.min.js,npm/prismjs@1/components/prism-cmake.min.js,npm/prismjs@1/components/prism-cpp.min.js,npm/prismjs@1/components/prism-json.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/docsify-themeable@0"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
   <script>
