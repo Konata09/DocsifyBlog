@@ -60,8 +60,12 @@
       plugins: [
         function (hook, vm) {
           const footer = [
-            '<hr/>',
             '<footer>',
+            '<hr/>',
+            '<div class="license-statement">',
+            '本文采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/deed.zh">知识共享署名-非商业性使用 4.0 国际许可协议</a> 进行许可。',
+            '</div>',
+            '<hr/>',
             '<span>&copy;2020 Konata<br>Proudly published with docsify</span>',
             '</footer>'
           ].join('');
