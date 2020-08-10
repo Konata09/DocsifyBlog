@@ -14,9 +14,7 @@
   <meta name="theme-color" content="#ffffff">
   <meta name="viewport"
     content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css"> -->
-  <link rel="stylesheet" href="/css/theme-simple.css">
-  <!-- <link rel="stylesheet" href="/css/theme-simple-dark.css"> -->
+  <link rel="stylesheet" href="/css/note.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism-tomorrow.min.css">
   <style>
     body,
@@ -26,25 +24,108 @@
     textarea {
       font-family: -apple-system, system-ui, BlinkMacSystemFont, 'PingFang SC', 'Segoe UI', Roboto, 'Hiragino Sans GB', 'Source Han Sans SC', 'Noto Sans CJK SC', 'Microsoft YaHei', 'WenQuanYi Micro Hei', 'WenQuanYi Zen Hei', 'Helvetica Neue', Arial, sans-serif;
     }
+
+    nav {
+      display: none;
+    }
   </style>
 </head>
 
 <body>
-  <nav style="display: none;">
+  <nav>
     <ul>
       <li>
         <a href="/">Full Version</a>
       </li>
       <li>
-        <a href="#/">中文</a>
+        <button id="switch-color">toggle</button>
       </li>
     </ul>
   </nav>
   <div id="app"></div>
   <script>
+    const rootElement = document.documentElement; // <html>
+    const darkModeStorageKey = 'user-color-scheme'; // 作为 localStorage 的 key
+    const darkModeMediaQueryKey = '--color-mode';
+    const rootElementDarkModeAttributeName = 'data-user-color-scheme';
+    const darkModeTogglebuttonElement = document.getElementById('switch-color');
+
+    const setLS = (k, v) => {
+      try {
+        localStorage.setItem(k, v);
+      } catch (e) { }
+    }
+    const removeLS = (k) => {
+      try {
+        localStorage.removeItem(k);
+      } catch (e) { }
+    }
+    const getLS = (k) => {
+      try {
+        return localStorage.getItem(k);
+      } catch (e) {
+        return null // 与 localStorage 中没有找到对应 key 的行为一致
+      }
+    }
+    const getModeFromCSSMediaQuery = () => {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    }
+    const resetRootDarkModeAttributeAndLS = () => {
+      rootElement.removeAttribute(rootElementDarkModeAttributeName);
+      removeLS(darkModeStorageKey);
+    }
+    const validColorModeKeys = {
+      'dark': true,
+      'light': true
+    }
+    const applyCustomDarkModeSettings = (mode) => {
+      // 接受从「开关」处传来的模式，或者从 localStorage 读取
+      const currentSetting = mode || getLS(darkModeStorageKey);
+      if (currentSetting === getModeFromCSSMediaQuery()) {
+        // 当用户自定义的显示模式和 prefers-color-scheme 相同时重置、恢复到自动模式
+        resetRootDarkModeAttributeAndLS();
+      } else if (validColorModeKeys[currentSetting]) { // 相比 Array#indexOf，这种写法 Uglify 后字节数更少
+        rootElement.setAttribute(rootElementDarkModeAttributeName, currentSetting);
+      } else {
+        // 首次访问或从未使用过开关、localStorage 中没有存储的值，currentSetting 是 null
+        // 或者 localStorage 被篡改，currentSetting 不是合法值
+        resetRootDarkModeAttributeAndLS();
+      }
+    }
+
+    const invertDarkModeObj = {
+      'dark': 'light',
+      'light': 'dark'
+    }
+    const toggleCustomDarkMode = () => {
+      let currentSetting = getLS(darkModeStorageKey);
+
+      if (validColorModeKeys[currentSetting]) {
+        // 从 localStorage 中读取模式，并取相反的模式
+        currentSetting = invertDarkModeObj[currentSetting];
+      } else if (currentSetting === null) {
+        // localStorage 中没有相关值，或者 localStorage 抛了 Error
+        // 从 CSS 中读取当前 prefers-color-scheme 并取相反的模式
+        currentSetting = invertDarkModeObj[getModeFromCSSMediaQuery()];
+      } else {
+        // 不知道出了什么幺蛾子，比如 localStorage 被篡改成非法值
+        return; // 直接 return;
+      }
+      // 将相反的模式写入 localStorage
+      setLS(darkModeStorageKey, currentSetting);
+      return currentSetting;
+    }
+    // 当页面加载时，将显示模式设置为 localStorage 中自定义的值（如果有的话）
+    applyCustomDarkModeSettings();
+    darkModeTogglebuttonElement.addEventListener('click', () => {
+      // 当用户点击「开关」时，获得新的显示模式、写入 localStorage、并在页面上生效
+      applyCustomDarkModeSettings(toggleCustomDarkMode());
+    })
+  </script>
+  <script>
     const categoryStatus = [];
     window.$docsify = {
-      name: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 512 512" style="margin-right: 10px"><defs><style>.cls-1{fill: none;stroke: #3f3f3f;stroke-linejoin: round;stroke-width: 7px;fill-rule: evenodd;}</style></defs><path class="cls-1" d="M30.913,414.969l66.049-59.328,60.451,58.208L96.962,481.013ZM250.329,221.313l-143.292,144.4,41.42,39.179L291.749,262.731M191,163.1L352.2,322.059h66.049l62.69-61.567V193.328L320.855,32.135H253.687L191,94.821V163.1Zm1.119-6.716,95.155-92.91M478.7,192.209l-92.916,95.148m-5.6-195.894,16.792-16.791,41.42,40.3-17.911,17.911M121.59,351.163l60.451,20.149M217.864,254.9l60.451,20.149M185.4,287.357l60.451,20.15M152.935,319.82l60.451,20.149"/></svg>'
+      name: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 512 512" style="margin-right: 10px"><defs><style>.cls-1{fill: none;stroke-linejoin: round;stroke-width: 7px;fill-rule: evenodd;}</style></defs><path class="cls-1" d="M30.913,414.969l66.049-59.328,60.451,58.208L96.962,481.013ZM250.329,221.313l-143.292,144.4,41.42,39.179L291.749,262.731M191,163.1L352.2,322.059h66.049l62.69-61.567V193.328L320.855,32.135H253.687L191,94.821V163.1Zm1.119-6.716,95.155-92.91M478.7,192.209l-92.916,95.148m-5.6-195.894,16.792-16.791,41.42,40.3-17.911,17.911M121.59,351.163l60.451,20.149M217.864,254.9l60.451,20.149M185.4,287.357l60.451,20.15M152.935,319.82l60.451,20.149"/></svg>'
         + '生命不息 折腾不止',
       repo: 'https://github.com/Konata09',
       loadSidebar: true,
@@ -54,7 +135,6 @@
       auto2top: true,
       basePath: '/posts/',
       homepage: 'hello-world.md',
-      themeColor: '#0396FF',
       autoHeader: false,
       formatUpdated: (time) => (lastModify = new Date(time)),
       search: {
@@ -113,7 +193,6 @@
             } else {
               newHtml = html;
             }
-
 
             next(
               `
@@ -178,9 +257,7 @@
       ]
     }
   </script>
-  <script>
 
-  </script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
   <script
     src="https://cdn.jsdelivr.net/combine/npm/prismjs@1/components/prism-java.min.js,npm/prismjs@1/components/prism-bash.min.js,npm/prismjs@1/components/prism-nginx.min.js,npm/prismjs@1/components/prism-c.min.js,npm/prismjs@1/components/prism-python.min.js,npm/prismjs@1/components/prism-less.min.js,npm/prismjs@1/components/prism-sass.min.js,npm/prismjs@1/components/prism-powershell.min.js,npm/prismjs@1/components/prism-ini.min.js,npm/prismjs@1/components/prism-cmake.min.js,npm/prismjs@1/components/prism-cpp.min.js,npm/prismjs@1/components/prism-json.min.js"></script>
