@@ -28,6 +28,10 @@
     nav {
       display: none;
     }
+
+    div#pull-switch {
+      display: none;
+    }
   </style>
 </head>
 
@@ -35,13 +39,13 @@
   <nav>
     <ul>
       <li>
-        <a href="/">Full Version</a>
+        <a href="/" id="getWaifu">I Need Waifu</a>
       </li>
     </ul>
   </nav>
-  <div id="pull-switch">
-      <div id="pull-string"></div>
-      <div id="pull-toggler"></div>
+  <div id="pull-switch" style="display: none;">
+    <div id="pull-string"></div>
+    <div id="pull-toggler"></div>
   </div>
   <div id="app"></div>
   <script>
@@ -93,14 +97,12 @@
         resetRootDarkModeAttributeAndLS();
       }
     }
-
     const invertDarkModeObj = {
       'dark': 'light',
       'light': 'dark'
     }
     const toggleCustomDarkMode = () => {
       let currentSetting = getLS(darkModeStorageKey);
-
       if (validColorModeKeys[currentSetting]) {
         // 从 localStorage 中读取模式，并取相反的模式
         currentSetting = invertDarkModeObj[currentSetting];
@@ -119,18 +121,18 @@
     // 当页面加载时，将显示模式设置为 localStorage 中自定义的值（如果有的话）
     applyCustomDarkModeSettings();
 
-    const pullString =document.getElementById('pull-string');
-    const pullToggler=document.getElementById('pull-toggler');
-    pullToggler.addEventListener('click', ()=>{
+    const pullString = document.getElementById('pull-string');
+    const pullToggler = document.getElementById('pull-toggler');
+    pullToggler.addEventListener('click', () => {
       pullToggler.classList.add('pulling');
       pullString.classList.add('pulling');
-      setTimeout(()=>{
-      applyCustomDarkModeSettings(toggleCustomDarkMode());
-        setTimeout(()=>{
-        pullString.classList.remove('pulling');
-        pullToggler.classList.remove('pulling');
-        },150)
-      },150)
+      setTimeout(() => {
+        applyCustomDarkModeSettings(toggleCustomDarkMode());
+        setTimeout(() => {
+          pullString.classList.remove('pulling');
+          pullToggler.classList.remove('pulling');
+        }, 150)
+      }, 150)
     })
   </script>
   <script>
@@ -161,8 +163,22 @@
           const imgRe = /<img[^>]+alt="([^>]*)">/g;
           let category = '无分类';
 
+          const WaifuLink = {
+            'note.konata.tech': 'konata.tech',
+            'note6.konata.tech': 'ipv6.konata.tech',
+            'localhost': 'ipv6.konata.tech',
+          }
+          const getWaifuLink = () => {
+            let year = publishDate.toISOString().slice(0, 4);
+            let month = publishDate.toISOString().slice(5, 7);
+            let day = publishDate.toISOString().slice(8, 10);
+            document.getElementById('getWaifu').href = `https://${WaifuLink[window.location.hostname]}/${year}/${month}/${day}${vm.route.path}/`
+            return;
+          }
+
           hook.init(function () {
             // 初始化完成后调用，只调用一次，没有参数。
+            document.getElementById('pull-switch').style.display = 'block';
           });
 
           hook.beforeEach(function (content) {
@@ -255,6 +271,7 @@
                 }
               })
             })
+            getWaifuLink();
           });
 
           hook.mounted(function () {
