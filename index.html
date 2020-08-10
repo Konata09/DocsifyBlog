@@ -37,11 +37,12 @@
       <li>
         <a href="/">Full Version</a>
       </li>
-      <li>
-        <button id="switch-color">toggle</button>
-      </li>
     </ul>
   </nav>
+  <div id="pull-switch">
+      <div id="pull-string"></div>
+      <div id="pull-toggler"></div>
+  </div>
   <div id="app"></div>
   <script>
     const rootElement = document.documentElement; // <html>
@@ -117,9 +118,19 @@
     }
     // 当页面加载时，将显示模式设置为 localStorage 中自定义的值（如果有的话）
     applyCustomDarkModeSettings();
-    darkModeTogglebuttonElement.addEventListener('click', () => {
-      // 当用户点击「开关」时，获得新的显示模式、写入 localStorage、并在页面上生效
+
+    const pullString =document.getElementById('pull-string');
+    const pullToggler=document.getElementById('pull-toggler');
+    pullToggler.addEventListener('click', ()=>{
+      pullToggler.classList.add('pulling');
+      pullString.classList.add('pulling');
+      setTimeout(()=>{
       applyCustomDarkModeSettings(toggleCustomDarkMode());
+        setTimeout(()=>{
+        pullString.classList.remove('pulling');
+        pullToggler.classList.remove('pulling');
+        },150)
+      },150)
     })
   </script>
   <script>
@@ -257,11 +268,14 @@
       ]
     }
   </script>
+  <script>
+
+  </script>
 
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
   <script
     src="https://cdn.jsdelivr.net/combine/npm/prismjs@1/components/prism-java.min.js,npm/prismjs@1/components/prism-bash.min.js,npm/prismjs@1/components/prism-nginx.min.js,npm/prismjs@1/components/prism-c.min.js,npm/prismjs@1/components/prism-python.min.js,npm/prismjs@1/components/prism-less.min.js,npm/prismjs@1/components/prism-sass.min.js,npm/prismjs@1/components/prism-powershell.min.js,npm/prismjs@1/components/prism-ini.min.js,npm/prismjs@1/components/prism-cmake.min.js,npm/prismjs@1/components/prism-cpp.min.js,npm/prismjs@1/components/prism-json.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/docsify-themeable@0"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/docsify-themeable@0"></script> -->
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
   <script>
     !function () { "use strict"; function r(o) { return (r = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o })(o) } !function (o, e) { void 0 === e && (e = {}); var t = e.insertAt; if (o && "undefined" != typeof document) { var n = document.head || document.getElementsByTagName("head")[0], c = document.createElement("style"); c.type = "text/css", "top" === t && n.firstChild ? n.insertBefore(c, n.firstChild) : n.appendChild(c), c.styleSheet ? c.styleSheet.cssText = o : c.appendChild(document.createTextNode(o)) } }, document.querySelector('link[href*="docsify-copy-code"]') && console.warn("[Deprecation] Link to external docsify-copy-code stylesheet is no longer necessary."), window.DocsifyCopyCodePlugin = { init: function () { return function (o, e) { o.ready(function () { console.warn("[Deprecation] Manually initializing docsify-copy-code using window.DocsifyCopyCodePlugin.init() is no longer necessary.") }) } } }, window.$docsify = window.$docsify || {}, window.$docsify.plugins = [function (o, s) { o.doneEach(function () { var o = Array.apply(null, document.querySelectorAll("pre[data-lang]")), c = { buttonText: "Copy", errorText: "Error", successText: "Copied" }; s.config.copyCode && Object.keys(c).forEach(function (t) { var n = s.config.copyCode[t]; "string" == typeof n ? c[t] = n : "object" === r(n) && Object.keys(n).some(function (o) { var e = -1 < location.href.indexOf(o); return c[t] = e ? n[o] : c[t], e }) }); var e = ['<button class="docsify-copy-code-button">', '<span class="label">'.concat(c.buttonText, "</span>"), '<span class="error">'.concat(c.errorText, "</span>"), '<span class="success">'.concat(c.successText, "</span>"), "</button>"].join(""); o.forEach(function (o) { o.insertAdjacentHTML("beforeend", e) }) }), o.mounted(function () { document.querySelector(".content").addEventListener("click", function (o) { if (o.target.classList.contains("docsify-copy-code-button")) { var e = "BUTTON" === o.target.tagName ? o.target : o.target.parentNode, t = document.createRange(), n = e.parentNode.querySelector("code"), c = window.getSelection(); t.selectNode(n), c.removeAllRanges(), c.addRange(t); try { document.execCommand("copy") && (e.classList.add("success"), setTimeout(function () { e.classList.remove("success") }, 1e3)) } catch (o) { console.error("docsify-copy-code: ".concat(o)), e.classList.add("error"), setTimeout(function () { e.classList.remove("error") }, 1e3) } "function" == typeof (c = window.getSelection()).removeRange ? c.removeRange(t) : "function" == typeof c.removeAllRanges && c.removeAllRanges() } }) }) }].concat(window.$docsify.plugins || []) }();
