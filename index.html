@@ -172,7 +172,8 @@
             let year = publishDate.toISOString().slice(0, 4);
             let month = publishDate.toISOString().slice(5, 7);
             let day = publishDate.toISOString().slice(8, 10);
-            document.getElementById('getWaifu').href = `https://${WaifuLink[window.location.hostname]}/${year}/${month}/${day}${vm.route.path}/`
+            console.log(vm.route.file.slice(0,-3));
+            document.getElementById('getWaifu').href = `https://${WaifuLink[window.location.hostname]}/${year}/${month}/${day}/${vm.route.file.slice(0,-3)}/`
             return;
           }
 
