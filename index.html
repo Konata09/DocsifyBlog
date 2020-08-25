@@ -162,18 +162,14 @@
           const wordCountRe = /([\u4e00-\u9fa5]+?|[a-zA-Z0-9]+)/g;
           const imgRe = /<img[^>]+alt="([^>]*)">/g;
           let category = '无分类';
-
+          const dateFormatter = new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
           const WaifuLink = {
             'note.konata.tech': 'konata.tech',
             'note6.konata.tech': 'ipv6.konata.tech',
             'localhost': 'ipv6.konata.tech',
           }
           const getWaifuLink = () => {
-            let year = publishDate.toISOString().slice(0, 4);
-            let month = publishDate.toISOString().slice(5, 7);
-            let day = publishDate.toISOString().slice(8, 10);
-            console.log(vm.route.file.slice(0,-3));
-            document.getElementById('getWaifu').href = `https://${WaifuLink[window.location.hostname]}/${year}/${month}/${day}/${vm.route.file.slice(0,-3)}/`
+            document.getElementById('getWaifu').href = `https://${WaifuLink[window.location.hostname]}/${dateFormatter.format(publishDate)}/${vm.route.file.slice(0, -3)}/`
             return;
           }
 
@@ -221,19 +217,20 @@
             } else {
               newHtml = html;
             }
-
+            const [{ value: pubYear }, , { value: pubMonth }, , { value: pubDay }] = dateFormatter.formatToParts(publishDate);
+            const [{ value: modYear }, , { value: modMonth }, , { value: modDay }] = dateFormatter.formatToParts(lastModify);
             next(
               `
               <header>
                 <h1>${title}</h1>
                 <div class="metainfo">
-                  <time datetime="${publishDate.toISOString()}">${publishDate.toISOString().slice(0, 10)}</time>
+                  <time datetime="${publishDate.toISOString()}">${pubYear}-${pubMonth}-${pubDay}</time>
                   <span class="dot"></span>
                   ${category}
                   <span class="dot"></span>
                   共 ${wordsCount} 字 (约 ${readTime} 分钟)
                   <span class="dot"></span>
-                  最后修改: <time datetime="${lastModify.toISOString()}">${lastModify.toISOString().slice(0, 10)}</time>
+                  最后修改: <time datetime="${lastModify.toISOString()}">${modYear}-${modMonth}-${modDay}</time>
                   </div>
               </header>
               ${newHtml}
