@@ -157,7 +157,7 @@
         function (hook, vm) {
           const re = /^---[\r\n](.|[\r\n])*[\r\n]---[\r\n]/;
           const titleRe = /title:\s?(.*)/;
-          const dateRe = /date:\s?(.*)/;
+          const dateRe = /date:\s?(.*)\s[0-9:]{5,}/;
           const categoryRe = /categories:\s?[\r\n]+\s+-\s(.*)/;
           const wordCountRe = /([\u4e00-\u9fa5]+?|[a-zA-Z0-9]+)/g;
           const imgRe = /<img[^>]+alt="([^>]*)">/g;
@@ -289,7 +289,7 @@
 
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
   <script
-    src="https://cdn.jsdelivr.net/combine/npm/prismjs@1/components/prism-java.min.js,npm/prismjs@1/components/prism-bash.min.js,npm/prismjs@1/components/prism-nginx.min.js,npm/prismjs@1/components/prism-c.min.js,npm/prismjs@1/components/prism-python.min.js,npm/prismjs@1/components/prism-less.min.js,npm/prismjs@1/components/prism-sass.min.js,npm/prismjs@1/components/prism-powershell.min.js,npm/prismjs@1/components/prism-ini.min.js,npm/prismjs@1/components/prism-cmake.min.js,npm/prismjs@1/components/prism-cpp.min.js,npm/prismjs@1/components/prism-json.min.js"></script>
+    src="https://cdn.jsdelivr.net/combine/npm/prismjs@1/components/prism-java.min.js,npm/prismjs@1/components/prism-bash.min.js,npm/prismjs@1/components/prism-nginx.min.js,npm/prismjs@1/components/prism-c.min.js,npm/prismjs@1/components/prism-python.min.js,npm/prismjs@1/components/prism-less.min.js,npm/prismjs@1/components/prism-sass.min.js,npm/prismjs@1/components/prism-powershell.min.js,npm/prismjs@1/components/prism-ini.min.js,npm/prismjs@1/components/prism-cmake.min.js,npm/prismjs@1/components/prism-cpp.min.js,npm/prismjs@1/components/prism-json.min.js,npm/prismjs@1/components/prism-nasm.min.js"></script>
   <!-- <script src="https://cdn.jsdelivr.net/npm/docsify-themeable@0"></script> -->
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
   <script>
