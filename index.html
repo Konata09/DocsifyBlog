@@ -155,7 +155,7 @@
       },
       plugins: [
         function (hook, vm) {
-          const re = /^---[\r\n](.|[\r\n])*[\r\n]---[\r\n]/;
+          const re = /^---([\r\n]|[^\-]|\-(?!\-\-))*---/;
           const titleRe = /title:\s?(.*)/;
           const dateRe = /date:\s?(.*)\s[0-9:]{5,}/;
           const categoryRe = /categories:\s?[\r\n]+\s+-\s(.*)/;
