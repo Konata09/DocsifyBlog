@@ -177,14 +177,18 @@
           // 移除没有实际链接的图片
           const removeEmptyImg = () => {
             const artcleimg = document.querySelectorAll('article img');
-            console.log(artcleimg);
             for (let el of artcleimg) {
               if (el.getAttribute('data-origin') === "") {
                 el.remove();
               }
             }
           }
-
+          const centerImgVideo = () => {
+            const els = document.querySelectorAll('article img,video');
+            for (let el of els) {
+              el.parentElement.style.textAlign = 'center';
+            }
+          }
           hook.init(function () {
             // 初始化完成后调用，只调用一次，没有参数。
             document.getElementById('pull-switch').style.display = 'block';
@@ -283,6 +287,7 @@
             })
             getWaifuLink();
             removeEmptyImg();
+            centerImgVideo();
           });
 
           hook.mounted(function () {
