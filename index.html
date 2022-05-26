@@ -53,7 +53,7 @@
     const darkModeStorageKey = 'user-color-scheme'; // 作为 localStorage 的 key
     const darkModeMediaQueryKey = '--color-mode';
     const rootElementDarkModeAttributeName = 'data-user-color-scheme';
-    const darkModeTogglebuttonElement = document.getElementById('switch-color');
+    const darkModeToggleButtonElement = document.getElementById('switch-color');
 
     const setLS = (k, v) => {
       try {
@@ -167,11 +167,22 @@
             'note.konata.tech': 'konata.tech',
             'note6.konata.tech': 'ipv6.konata.tech',
             'localhost': 'ipv6.konata.tech',
-            'note.bronya.moe': 'konata.tech',            'bronya.moe': 'konata.tech'
+            'note.bronya.moe': 'konata.tech',
+            'bronya.moe': 'konata.tech'
           }
           const getWaifuLink = () => {
             document.getElementById('getWaifu').href = `https://${WaifuLink[window.location.hostname]}/${dateFormatter.format(publishDate)}/${vm.route.file.slice(0, -3)}/`
             return;
+          }
+          // 移除没有实际链接的图片
+          const removeEmptyImg = () => {
+            const artcleimg = document.querySelectorAll('article img');
+            console.log(artcleimg);
+            for (let el of artcleimg) {
+              if (el.getAttribute('data-origin') === "") {
+                el.remove();
+              }
+            }
           }
 
           hook.init(function () {
@@ -186,7 +197,7 @@
               title = content.match(titleRe)[1];
               publishDate = new Date(content.match(dateRe)[1]);
               category = content.match(categoryRe)[1];
-            } catch{ }
+            } catch { }
             return content.replace(re, '');
           });
 
@@ -241,7 +252,7 @@
               本文采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/deed.zh">知识共享署名-非商业性使用 4.0 国际许可协议</a> 进行许可。
               </div>
               <hr/>
-              <span>&copy;2021 Konata<br>Proudly published with docsify</span>
+              <span>&copy;2022 Konata<br>Proudly published with docsify</span>
               </footer>
               `)
           });
@@ -271,6 +282,7 @@
               })
             })
             getWaifuLink();
+            removeEmptyImg();
           });
 
           hook.mounted(function () {
@@ -291,7 +303,6 @@
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
   <script
     src="https://cdn.jsdelivr.net/combine/npm/prismjs@1/components/prism-java.min.js,npm/prismjs@1/components/prism-bash.min.js,npm/prismjs@1/components/prism-nginx.min.js,npm/prismjs@1/components/prism-c.min.js,npm/prismjs@1/components/prism-python.min.js,npm/prismjs@1/components/prism-less.min.js,npm/prismjs@1/components/prism-sass.min.js,npm/prismjs@1/components/prism-powershell.min.js,npm/prismjs@1/components/prism-ini.min.js,npm/prismjs@1/components/prism-cmake.min.js,npm/prismjs@1/components/prism-cpp.min.js,npm/prismjs@1/components/prism-json.min.js,npm/prismjs@1/components/prism-yaml.min.js,npm/prismjs@1/components/prism-nasm.min.js"></script>
-  <!-- <script src="https://cdn.jsdelivr.net/npm/docsify-themeable@0"></script> -->
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
   <script>
     !function () { "use strict"; function r(o) { return (r = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o })(o) } !function (o, e) { void 0 === e && (e = {}); var t = e.insertAt; if (o && "undefined" != typeof document) { var n = document.head || document.getElementsByTagName("head")[0], c = document.createElement("style"); c.type = "text/css", "top" === t && n.firstChild ? n.insertBefore(c, n.firstChild) : n.appendChild(c), c.styleSheet ? c.styleSheet.cssText = o : c.appendChild(document.createTextNode(o)) } }, document.querySelector('link[href*="docsify-copy-code"]') && console.warn("[Deprecation] Link to external docsify-copy-code stylesheet is no longer necessary."), window.DocsifyCopyCodePlugin = { init: function () { return function (o, e) { o.ready(function () { console.warn("[Deprecation] Manually initializing docsify-copy-code using window.DocsifyCopyCodePlugin.init() is no longer necessary.") }) } } }, window.$docsify = window.$docsify || {}, window.$docsify.plugins = [function (o, s) { o.doneEach(function () { var o = Array.apply(null, document.querySelectorAll("pre[data-lang]")), c = { buttonText: "Copy", errorText: "Error", successText: "Copied" }; s.config.copyCode && Object.keys(c).forEach(function (t) { var n = s.config.copyCode[t]; "string" == typeof n ? c[t] = n : "object" === r(n) && Object.keys(n).some(function (o) { var e = -1 < location.href.indexOf(o); return c[t] = e ? n[o] : c[t], e }) }); var e = ['<button class="docsify-copy-code-button">', '<span class="label">'.concat(c.buttonText, "</span>"), '<span class="error">'.concat(c.errorText, "</span>"), '<span class="success">'.concat(c.successText, "</span>"), "</button>"].join(""); o.forEach(function (o) { o.insertAdjacentHTML("beforeend", e) }) }), o.mounted(function () { document.querySelector(".content").addEventListener("click", function (o) { if (o.target.classList.contains("docsify-copy-code-button")) { var e = "BUTTON" === o.target.tagName ? o.target : o.target.parentNode, t = document.createRange(), n = e.parentNode.querySelector("code"), c = window.getSelection(); t.selectNode(n), c.removeAllRanges(), c.addRange(t); try { document.execCommand("copy") && (e.classList.add("success"), setTimeout(function () { e.classList.remove("success") }, 1e3)) } catch (o) { console.error("docsify-copy-code: ".concat(o)), e.classList.add("error"), setTimeout(function () { e.classList.remove("error") }, 1e3) } "function" == typeof (c = window.getSelection()).removeRange ? c.removeRange(t) : "function" == typeof c.removeAllRanges && c.removeAllRanges() } }) }) }].concat(window.$docsify.plugins || []) }();
